@@ -26,6 +26,7 @@
         }
         .green { color: #155724; }
         .orange { color: #856404; }
+        .red { color: #721c24; }
         h2 {
             font-family: 'Georgia', serif;
             font-size: 10px;
@@ -39,7 +40,7 @@
 <body>
     <h1>DrinkMath</h1>
     <h2>Mohammad Motaghianfar</h2>
-    <p>Calculate alcohol needed for BAC 0.07% and 0.08%</p>
+    <p>Calculate alcohol needed for BAC 0.07% and 0.08%, with maintenance amounts</p>
 
     <div>
         <label for="weight">Enter your weight (kg):</label><br>
@@ -95,20 +96,45 @@
 
             const pureAlcoholPerMl = (alcoholPercentage / 100) * 0.79;
 
+            // Initial BAC calculations
             const alcoholGrams07 = 0.07 * weight * r * 10;
             const alcoholMl07 = Math.round((alcoholGrams07 / pureAlcoholPerMl) * 10) / 10;
 
             const alcoholGrams08 = 0.08 * weight * r * 10;
             const alcoholMl08 = Math.round((alcoholGrams08 / pureAlcoholPerMl) * 10) / 10;
 
-            // Calculate difference
+            // Calculate difference between 0.07 and 0.08
             const diff = Math.round((alcoholMl08 - alcoholMl07) * 10) / 10;
 
-            // Display results with color coding
+            // Maintenance calculations (BAC reduction rate: 0.015 per hour)
+            const bacReductionHalfHour = 0.0075; // 0.015 * 0.5
+            const bacReductionOneHour = 0.015;   // 0.015 * 1
+
+            // For BAC 0.07
+            const maintainGrams07HalfHour = bacReductionHalfHour * weight * r * 10;
+            const maintainMl07HalfHour = Math.round((maintainGrams07HalfHour / pureAlcoholPerMl) * 10) / 10;
+            const maintainGrams07OneHour = bacReductionOneHour * weight * r * 10;
+            const maintainMl07OneHour = Math.round((maintainGrams07OneHour / pureAlcoholPerMl) * 10) / 10;
+
+            // For BAC 0.08
+            const maintainGrams08HalfHour = bacReductionHalfHour * weight * r * 10;
+            const maintainMl08HalfHour = Math.round((maintainGrams08HalfHour / pureAlcoholPerMl) * 10) / 10;
+            const maintainGrams08OneHour = bacReductionOneHour * weight * r * 10;
+            const maintainMl08OneHour = Math.round((maintainGrams08OneHour / pureAlcoholPerMl) * 10) / 10;
+
+            // Display results with color coding and desired structure
             resultDiv.innerHTML = `
                 <span class="green">Amount of ${alcoholPercentage}% alcohol required for BAC 0.07%: ${alcoholMl07} mL</span><br>
-                Diff = ${diff} mL<br>
-                <span class="orange">Amount of ${alcoholPercentage}% alcohol required for BAC 0.08%: ${alcoholMl08} mL</span>
+                To maintain BAC 0.07:<br>
+                - After 30 minutes: ${maintainMl07HalfHour} mL<br>
+                - After 1 hour: ${maintainMl07OneHour} mL<br>
+                <br>
+                <span class="orange">Amount of ${alcoholPercentage}% alcohol required for BAC 0.08%: ${alcoholMl08} mL</span><br>
+                To maintain BAC 0.08:<br>
+                - After 30 minutes: ${maintainMl08HalfHour} mL<br>
+                - After 1 hour: ${maintainMl08OneHour} mL<br>
+                <br>
+                <span class="red">Diff from 0.07 to BAC 0.08 = ${diff} mL</span>
             `;
         }
     </script>
